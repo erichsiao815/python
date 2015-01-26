@@ -6,8 +6,6 @@ from datetime import datetime
 from threading import Thread
 import fcntl
 import struct
-import time
-import os
 
 ip_exist = [0]*256	#list type
 # We also put in some error handling for catching errors
@@ -44,7 +42,7 @@ def _pingIp(number, ipaddr,port):
 	sock.close() 
 	#print "close socket ", ipaddr
 	
-def ipscan(serverIp, scanPort):
+def searchip(serverIp, scanPort):
 	taskid = {}	#list type
 	baseip = {}	#list type
 	clientIp = serverIp
@@ -65,45 +63,3 @@ def ipscan(serverIp, scanPort):
 			clientIp = "{0}.{1}.{2}.{3}".format(baseip[0],baseip[1],baseip[2],i)
 	return clientIp
 
-
-# Clear screen
-#subprocess.call('clear')
-
-# input port number
-remotePort    = raw_input("Enter a remote port to scan: ")
-print "-" * 50
-print "Please wait, scanning remote host port", remotePort
-print "-" * 50
-
-# Check what time the scan started
-t1 = datetime.now()
-# Scanning
-try:
-	myip = get_my_ip()
-	client = ipscan(myip,remotePort)
-	if client == myip:
-		print "no clinet be found"
-	else:
-		print "client ip:",client
-
-
-except KeyboardInterrupt:
-        print "You pressed Ctrl+C"
-        sys.exit()
-
-except socket.gaierror:
-        print 'Hostname could not be resolved. Exiting'
-        sys.exit()
-
-except socket.error:
-        print "Couldn't connect to server"
-        sys.exit()
-
-# Checking the time again
-t2 = datetime.now()
-
-# Calculates the difference of time, to see how long it took to run the script
-total =  t2 - t1
-
-# Printing the information to screen
-print 'Scanning Completed in: ', total

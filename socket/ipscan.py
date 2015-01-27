@@ -51,7 +51,7 @@ def searchip(serverIp, scanPort):
 	baseip[2] = serverIp.split('.')[2]
 	baseip[3] = serverIp.split('.')[3]
 	for ip in range(2,256):
-		if int(baseip[3]) != ip:
+		#if int(baseip[3]) != ip:
 			str_newip = "{0}.{1}.{2}.{3}".format(baseip[0],baseip[1],baseip[2],ip)	#newip = "%s.%s.%s.%d" %(baseip[0],baseip[1],baseip[2],ip)
 			taskid[ip] = Thread(target=_pingIp, args=(ip,str_newip,scanPort))
 			#time.sleep(0.1)

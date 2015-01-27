@@ -6,46 +6,20 @@ import os
 import sys
 import time
 import os.path
-
-
-def MotorState():
-	retdata = 'ERROR'
-	if os.path.exists("/sys/class/motor/motor") :
-		fd = open("/sys/class/motor/motor", 'r+')
-		if fd < 0:
-			print "error: motor_state open"
-		else:
-			retdata = fd.readline()
-			print retdata
-			fd.close()
-	return retdata
-
-
-def MotorCtrl(step):
-	retdata = 'ERROR'
-	if os.path.exists("/sys/class/motor/motor"):
-		fd = open("/sys/class/motor/motor", 'r+');
-		if fd < 0:
-			print "error: motor_ctrl open"
-			retdata = 'NG'
-		else:
-			retdata = "{0}".format(step)+'\0'
-			print "{0} > motor\n".format(step)
-			fd.write(retdata)
-			fd.close()
-			retdata = 'OK'
-	return data
+import motor
 
 def SrvCommand(cmd):
 	result = 'ERROR'
 	header = cmd.split(' ')[0]
 	type = cmd.split(' ')[1]
 	para = cmd.split(' ')[2]
-	if  header== "M1":
-		if  type == 'S':
-			result = MotorState()
-		if type == 'C':
-			result = MotorCtrl(para)
+	if  header== "M":
+		if  type == 'R':
+			result = motor.state()
+		elif type == 'W':
+			result = motor.ctrl(para)
+		else:
+			print "cmd error"
 	else:
 		print "header error"
 	return result
@@ -85,29 +59,27 @@ if sock is None:
 	print 'could not open socket'  
 	sys.exit(1)  
 	
-	
-while True:
-	(csock, addr) = sock.accept()
-	#csock.settimeout(5.0)
-	print "server : got connection from ",addr
-	#hostname = sock.GetHostName()
-        cmd = "Im bpi"
-	csock.send(cmd)
-        #time.sleep(1)
-	data = csock.recv(msgsize)
-	if data is None:
-		print "cmd error"
-	else:
-		if len(data) <= 0:
-			print "ping me ??"
+try:	
+	while True:
+		(csock, addr) = sock.accept()
+		csock.settimeout(5.0)
+		print "connection from ",addr
+		#hostname = sock.GetHostName()
+		cmd = "Im bpi"
+		csock.send(cmd)
+		#time.sleep(1)
+		data = csock.recv(msgsize)
+		if data is None:
+			print "cmd error"
 		else:
-			print 'Received',data
-			data = SrvCommand(data)
-			csock.send(data)
-	csock.close()
-	
-try:
-        sys.exit()
+			if len(data) <= 0:
+				print "ping me ??"
+			else:
+				print 'Received',data
+				data = SrvCommand(data)
+				csock.send(data)
+		csock.close()
+
 
 except KeyboardInterrupt:
         print "You pressed Ctrl+C"

@@ -8,14 +8,18 @@
 import os
 import sys
 import os.path
+import subprocess
 
 __motorPath = "/sys/class/motor/motor"
 __ppsPath = "/sys/class/motor/hz"
+__InsModule = "modprobe motor_28byj_48"
+
 
 def __IsDriverExist(path):
 	if not os.path.exists(path):
 		print "file dont exist, try to probe motor....."
-		if os.system("modprobe motor_28byj_48") != 0:
+		
+		if subprocess.call(__InsModule.split()) != 0:
 			print "Failed"
 			return False
 		print "succeeded"

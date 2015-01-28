@@ -19,7 +19,7 @@ def SrvCommand(cmd):
 	if num < 3:
 		print "format dont match \n"
 		return result
-	print "split number {0}".format(num)
+	#print "split number {0}".format(num)
 	header = cmd.split(' ')[0]
 	type = cmd.split(' ')[1]
 	para = cmd.split(' ')[2]

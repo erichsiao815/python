@@ -34,7 +34,7 @@ def sendCmd(serverIp,cmd):
 		sock.connect((serverIp, talk_port))
 		#waiting for server 
 		data = sock.recv(msgsize)
-		print 'Received',data
+		print 'srv name:',data
 		#send cmd to server
 		sock.send(cmd)
 		# wait server 
@@ -51,7 +51,7 @@ def sendCmd(serverIp,cmd):
 myip = get_my_ip()
 server = searchip(myip,talk_port)
 if server == myip:
-	print "no clinet be found"
+	print "no server be found"
 	sys.exit()
 else:
 	print "server ip:",server

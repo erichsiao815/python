@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 #
-
+#
+#
+# Todo : add thread
+#
 import socket
 import os
 import sys
@@ -10,16 +13,28 @@ import motor
 
 def SrvCommand(cmd):
 	result = 'ERROR'
+	num = 0
+	for str in cmd.split(' '):
+		num+=1
+	if num < 3:
+		print "format dont match \n"
+		return result
+	print "split number {0}".format(num)
 	header = cmd.split(' ')[0]
 	type = cmd.split(' ')[1]
 	para = cmd.split(' ')[2]
 	if  header== "M":
-		if  type == 'R':
+		if  type == 'read':
 			result = motor.state()
-		elif type == 'W':
+		elif type == 'write':
 			result = motor.ctrl(para)
+		elif type == 'getspeed':
+			result = motor.getSpeed()
+		elif type == 'setspeed':
+			result = motor.setSpeed(para)
 		else:
-			print "cmd error"
+			print "ctrl type error"
+	#elif header== "T":
 	else:
 		print "header error"
 	return result

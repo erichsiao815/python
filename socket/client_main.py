@@ -6,10 +6,14 @@ import os
 import sys
 from ipscan import searchip
 from ipscan import get_my_ip
+from directionkey import dirkey
+import time
+from threading import Thread
 
 talk_port = 3490
 msgsize = 1024
 
+		
 
 def sendCmd(serverIp,cmd):
 	sock = None
@@ -46,8 +50,46 @@ def sendCmd(serverIp,cmd):
 		print msg
 		return False
 	sock.close
-
-
+# into car mode
+def carmode(serverIp):
+	key = dirkey()
+	#key.start()
+	taskfd = Thread(target=key.recive_event, args=())
+	taskfd.start()
+	print "into car mode"
+	stopneed = False
+	while True:
+		cmd = None
+		if key.key_leave:
+			print "got leave key"
+			#key.exit()
+			cmd = "car stop"
+			sendCmd(serverIp, cmd)
+			# make sure cmd is recived
+			return
+		elif key.key_up:
+			stopneed = True
+			if key.key_right:
+				cmd = "car right"
+			elif key.key_left:
+				cmd = "car left"
+			else:
+				cmd = "car go"
+		elif key.key_down:
+			stopneed = True
+			if key.key_right:
+				cmd = "car bright"
+			elif key.key_left:
+				cmd = "car bleft"
+			else:
+				cmd = "car back"
+		elif stopneed :
+			cmd = "car stop"
+			stopneed = False
+		if cmd is not  None:
+			sendCmd(serverIp, cmd)
+		time.sleep(0.1)
+###################################################
 myip = get_my_ip()
 server = searchip(myip,talk_port)
 if server == myip:
@@ -58,11 +100,14 @@ else:
 
 try:
 	while True:
-		input    = raw_input("Enter cmd (q to exit): ")
-		if input == 'q':
+		keyin    = raw_input("Enter cmd (q to exit): ")
+		if keyin == 'q':
 			break
-		if not sendCmd(server, input):
-			break
+		elif keyin == "carmode":
+			carmode(server)
+		else:
+			if not sendCmd(server, keyin):
+			      break
 
 
 except KeyboardInterrupt:

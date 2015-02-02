@@ -57,10 +57,10 @@ def SrvCommand(cmd):
 		elif type == 'back':
 			result = car.ctrl("right",-1)
 			result = car.ctrl("left",-1)
-		elif type == 'backr':
+		elif type == 'bright':
 			result = car.ctrl("right",0)
 			result = car.ctrl("left",-1)
-		elif type == 'backl':
+		elif type == 'bleft':
 			result = car.ctrl("right",-1)
 			result = car.ctrl("left",0)
 		elif type == 'stop':

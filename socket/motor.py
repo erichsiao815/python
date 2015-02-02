@@ -10,9 +10,11 @@ import sys
 import os.path
 import subprocess
 
-__motorPath = "/sys/class/motor/motor"
-__ppsPath = "/sys/class/motor/hz"
-__InsModule = "modprobe motor_28byj_48"
+__motorPath = "/sys/class/motor/28BYJ-48/"
+__ctlPath = __motorPath+"ctl"
+__statePath = __motorPath+"state"
+__speedPath = __motorPath+"speed"
+__InsModule = "modprobe motor_sys_28byj_48"
 
 
 def __IsDriverExist(path):
@@ -28,9 +30,9 @@ def __IsDriverExist(path):
 	
 def state():
 	retdata = 'ERROR'
-	if not __IsDriverExist(__motorPath):
+	if not __IsDriverExist(__statePath):
 		return retdata
-	fd = open(__motorPath, 'r+')
+	fd = open(__statePath, 'r')
 	if fd < 0:
 		print "open error: motor r"
 	else:
@@ -42,14 +44,14 @@ def state():
 
 def ctrl(step):
 	retdata = 'ERROR'
-	if not __IsDriverExist(__motorPath):
+	if not __IsDriverExist(__ctlPath):
 		return retdata
-	fd = open(__motorPath, 'r+');
+	fd = open(__ctlPath, 'w');
 	if fd < 0:
 		print "open error: motor w "
 	else:
 		retdata = "{0}".format(step)+'\0'
-		print "{0} > motor\n".format(step)
+		print "{0} > motor".format(step)
 		fd.write(retdata)
 		fd.close()
 		retdata = 'OK'
@@ -58,9 +60,9 @@ def ctrl(step):
 
 def setSpeed(pps):
 	retdata = 'ERROR'
-	if not __IsDriverExist(__ppsPath):
+	if not __IsDriverExist(__speedPath):
 		return pps
-	fd = open(__ppsPath, 'r+');
+	fd = open(__speedPath, 'r+');
 	if fd < 0:
 		print "open error: speed w "
 	else:
@@ -72,9 +74,9 @@ def setSpeed(pps):
 
 def getSpeed():
 	pps = 'ERROR'
-	if not __IsDriverExist(__ppsPath):
+	if not __IsDriverExist(__speedPath):
 		return pps
-	fd = open(__ppsPath, 'r+');
+	fd = open(__speedPath, 'r+');
 	if fd < 0:
 		print "open error: speed r "
 	else:

@@ -2,8 +2,10 @@
 #
 #
 #
-# Todo : add thread
+# Todo : add thread to recive socket
+# todo : WDT for motor / car ? to prevent wifi missed/ disconeected ?
 #
+
 import socket
 import os
 import sys
@@ -11,7 +13,7 @@ import time
 import os.path
 import motor
 import car
-
+import lens
 
 def SrvCommand(cmd):
 	result = 'ERROR'
@@ -19,6 +21,9 @@ def SrvCommand(cmd):
 	for str in cmd.split(' '):
 		num+=1
 	#print "split number {0}".format(num)
+	if num < 2:
+		print "format dont match \n"
+		return result
 	header = cmd.split(' ')[0]
 	type = cmd.split(' ')[1]
 	
@@ -40,11 +45,6 @@ def SrvCommand(cmd):
 		else:
 			print "motor: ctrl type error"
 	elif header== "car":
-		if num < 2:
-			print "format dont match \n"
-			return result
-
-		
 		if  type == 'go':
 			result = car.ctrl("right",1)
 			result = car.ctrl("left",1)
@@ -68,6 +68,27 @@ def SrvCommand(cmd):
 			result = car.ctrl("left",0)
 		else:
 			print "car: ctrl type error"
+	elif header== "zoom":
+		if  type == 'in':
+			#pos =str(int( lens.getPos("focus")) + 100)
+			#print "pos",pos
+			result = lens.ctrl("zoom",200)
+		elif type == 'out':
+			pos = lens.getPos("zoom")
+			print "pos",pos
+			if int(pos) > 10:
+				result = lens.ctrl("zoom",-200)
+			else:
+				print "overrange"
+		else:
+			print "zoom: ctrl type error"
+	elif header== "focus":
+		if  type == 'near':
+			result = lens.ctrl("focus",10)
+		elif type == 'far':
+			result = lens.ctrl("focus",-10)
+		else:
+			print "focus: ctrl type error"
 	else:
 		print "header error"
 	return result

@@ -17,7 +17,7 @@ __motorPath = { "right":__motorWheelRight, "left":__motorWheelLeft }
 #__ctlPath = __motorPath+"ctl"
 #__statePath = __motorPath+"state"
 #__speedPath = __motorPath+"speed"
-__InsModule = "modprobe motor_l293d"
+__InsModule = "modprobe motor_l293d_dc"
 
 
 
@@ -74,7 +74,7 @@ def setSpeed(wheel, pps):
 	retdata = 'ERROR'
 	speedPath = __GetWheelPath(wheel, "speed")
 	if not __IsDriverExist(speedPath):
-		return pps
+		return retdata
 	fd = open(speedPath, 'r+');
 	if fd < 0:
 		print "open error: speed w "
@@ -86,19 +86,19 @@ def setSpeed(wheel, pps):
 
 
 def getSpeed(wheel):
-	pps = 'ERROR'
+	retdata = 'ERROR'
 	speedPath = __GetWheelPath(wheel, "speed")
 	if not __IsDriverExist(speedPath):
-		return pps
+		return retdata
 	fd = open(speedPath, 'r+');
 	if fd < 0:
 		print "open error: speed r "
 	else:
-		pps = fd.readline()
-		print pps
+		retdata = fd.readline()
+		print retdata
 		fd.close()
 
-	return pps
+	return retdata
 
 
 

@@ -16,6 +16,9 @@ msgsize = 1024
 		
 
 def sendCmd(serverIp,cmd):
+	if cmd == "" or cmd == " ":
+		print "cmd is null, no sending"
+		return
 	sock = None
 	for res in  socket.getaddrinfo(None, talk_port,
 				      socket.AF_UNSPEC,
@@ -50,7 +53,40 @@ def sendCmd(serverIp,cmd):
 		print msg
 		return False
 	sock.close
-# into car mode
+#########################################################
+#	car mode
+#########################################################
+def lens(serverIp):
+	key = dirkey()
+	#key.start()
+	taskfd = Thread(target=key.recive_event, args=())
+	taskfd.start()
+	print "into lens mode"
+
+	while True:
+		cmd = None
+		if key.key_leave:
+			print "got leave key"
+			#key.exit()
+			cmd = "car stop"
+			sendCmd(serverIp, cmd)
+			# make sure cmd is recived
+			return
+		elif key.key_up:
+			cmd = "zoom in"
+		elif key.key_down:
+			cmd = "zoom out"
+		elif key.key_right:
+			cmd = "focus near"
+		elif key.key_left:
+			cmd = "focus far"
+		if cmd is not  None:
+			sendCmd(serverIp, cmd)
+			print cmd
+		time.sleep(0.1)
+#########################################################
+#	car mode
+#########################################################
 def carmode(serverIp):
 	key = dirkey()
 	#key.start()
@@ -88,7 +124,10 @@ def carmode(serverIp):
 			stopneed = False
 		if cmd is not  None:
 			sendCmd(serverIp, cmd)
+			print cmd
 		time.sleep(0.1)
+###################################################
+#	main
 ###################################################
 myip = get_my_ip()
 server = searchip(myip,talk_port)
@@ -105,6 +144,8 @@ try:
 			break
 		elif keyin == "carmode":
 			carmode(server)
+		elif keyin == "lens":
+			lens(server)
 		else:
 			if not sendCmd(server, keyin):
 			      break
